@@ -40,10 +40,10 @@ export default function LoginPage() {
                   <HeartFilled />
                 </div>
                 <Title level={3} style={{ marginBottom: 4, color: '#0f172a' }}>
-                  E Office
+                  TAI
                 </Title>
                 <Text type="secondary">
-                  Văn phòng điện tử
+                  Quản lý TAI
                 </Text>
               </div>
 
