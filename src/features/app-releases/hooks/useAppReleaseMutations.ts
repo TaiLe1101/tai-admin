@@ -1,0 +1,42 @@
+import { useState } from 'react'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { App } from 'antd'
+import { deleteAppRelease, uploadAppRelease } from '../api/appReleaseApi'
+import type { UploadAppReleaseReq } from '../api/dto/req/appReleaseReq'
+import { APP_RELEASES_QUERY_KEY } from '../queries/useAppReleases'
+
+export function useDeleteAppRelease() {
+  const { message } = App.useApp()
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: deleteAppRelease,
+    onSuccess: (res) => {
+      void message.success(res.message || 'Xóa bản nháp thành công')
+      void queryClient.invalidateQueries({ queryKey: APP_RELEASES_QUERY_KEY })
+    },
+    onError: (error) => {
+      void message.error(error.message)
+    },
+  })
+}
+
+export function useUploadAppRelease() {
+  const { message } = App.useApp()
+  const queryClient = useQueryClient()
+  const [progress, setProgress] = useState(0)
+  const mutation = useMutation({
+    mutationFn: (files: UploadAppReleaseReq) =>
+      uploadAppRelease(files, setProgress),
+    onMutate: () => {
+      setProgress(0)
+    },
+    onSuccess: (res) => {
+      void message.success(res.message || 'Tải phiên bản mới lên thành công')
+      void queryClient.invalidateQueries({ queryKey: APP_RELEASES_QUERY_KEY })
+    },
+    onError: (error) => {
+      void message.error(error.message)
+    },
+  })
+  return { ...mutation, progress }
+}

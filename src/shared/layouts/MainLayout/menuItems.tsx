@@ -1,9 +1,12 @@
 import { type PermissionCode } from '#/shared/constants/permissions'
 import { ROUTE } from '#/shared/constants/route'
-import { DashboardOutlined, SettingOutlined } from '@ant-design/icons'
+import {
+  AppstoreOutlined,
+  DashboardOutlined,
+  UnorderedListOutlined,
+} from '@ant-design/icons'
 import type { MenuProps } from 'antd'
 import { Tooltip } from 'antd'
-import { AlignStartVertical, Building, Settings2, UserKey, UserShield } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 
 export type AppMenuItem = Required<MenuProps>['items'][number] & {
@@ -63,36 +66,14 @@ export const menuItems: AppMenuItem[] = [
     label: 'Tổng quan',
   },
   {
-    key: 'settings',
-    icon: <SettingOutlined />,
-    label: 'Cài đặt',
+    key: 'applications',
+    icon: <AppstoreOutlined />,
+    label: 'Quản lý ứng dụng',
     children: [
       {
-        key: ROUTE.SETTINGS.RBAC,
-        label: 'Vai trò hệ thống & quyền',
-        icon: <UserShield size={16} />,
-      },
-      {
-        key: "company",
-        label: "Tổ chức",
-        icon: <Building size={16} />,
-        children: [
-          {
-            key: "#",
-            label: "Tài khoản",
-            icon: <UserKey size={16} />
-          },
-          {
-            key: ROUTE.SETTINGS.POSITION,
-            label: "Vị trí chức danh",
-            icon: <AlignStartVertical size={16} />
-          },
-        ]
-      },
-      {
-        key: "#",
-        label: "Tùy chỉnh",
-        icon: <Settings2 size={16} />
+        key: ROUTE.APPLICATIONS.RELEASES,
+        label: 'Danh sách phiên bản',
+        icon: <UnorderedListOutlined />,
       },
     ],
   },
@@ -150,7 +131,11 @@ export function filterMenuItemsByPermission(
     if (!item) return acc
 
     // 1. Kiểm tra quyền của chính menu item (nếu có khai báo)
-    if ('permission' in item && item.permission && !hasPermissionFn(item.permission)) {
+    if (
+      'permission' in item &&
+      item.permission &&
+      !hasPermissionFn(item.permission)
+    ) {
       return acc
     }
 
@@ -181,8 +166,15 @@ export function getOpenKeysFromPath(
   items: AppMenuItem[] = menuItems,
 ): string[] {
   for (const item of items) {
-    if (item && 'children' in item && item.children && Array.isArray(item.children)) {
-      const match = item.children.some((child) => child && child.key === pathname)
+    if (
+      item &&
+      'children' in item &&
+      item.children &&
+      Array.isArray(item.children)
+    ) {
+      const match = item.children.some(
+        (child) => child && child.key === pathname,
+      )
       if (match) {
         return [item.key as string]
       }

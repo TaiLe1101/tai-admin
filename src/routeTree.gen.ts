@@ -14,6 +14,7 @@ import { Route as MainLayoutRouteImport } from './routes/_main-layout'
 import { Route as MainLayoutIndexRouteImport } from './routes/_main-layout/index'
 import { Route as MainLayout403RouteImport } from './routes/_main-layout/403'
 import { Route as AuthLayoutAuthLoginIndexRouteImport } from './routes/_auth-layout/auth/login/index'
+import { Route as MainLayoutApplicationsReleasesIndexRouteImport } from './routes/_main-layout/applications/releases/index'
 import { Route as MainLayoutSettingsPositionIndexRouteImport } from './routes/_main-layout/settings/position/index'
 import { Route as MainLayoutSettingsRbacIndexRouteImport } from './routes/_main-layout/settings/rbac/index'
 
@@ -41,6 +42,12 @@ const AuthLayoutAuthLoginIndexRoute =
     path: '/auth/login/',
     getParentRoute: () => AuthLayoutRoute,
   } as any)
+const MainLayoutApplicationsReleasesIndexRoute =
+  MainLayoutApplicationsReleasesIndexRouteImport.update({
+    id: '/applications/releases/',
+    path: '/applications/releases/',
+    getParentRoute: () => MainLayoutRoute,
+  } as any)
 const MainLayoutSettingsPositionIndexRoute =
   MainLayoutSettingsPositionIndexRouteImport.update({
     id: '/settings/position/',
@@ -58,6 +65,7 @@ export interface FileRoutesByFullPath {
   '/': typeof MainLayoutIndexRoute
   '/403': typeof MainLayout403Route
   '/auth/login/': typeof AuthLayoutAuthLoginIndexRoute
+  '/applications/releases/': typeof MainLayoutApplicationsReleasesIndexRoute
   '/settings/position/': typeof MainLayoutSettingsPositionIndexRoute
   '/settings/rbac/': typeof MainLayoutSettingsRbacIndexRoute
 }
@@ -65,6 +73,7 @@ export interface FileRoutesByTo {
   '/': typeof MainLayoutIndexRoute
   '/403': typeof MainLayout403Route
   '/auth/login': typeof AuthLayoutAuthLoginIndexRoute
+  '/applications/releases': typeof MainLayoutApplicationsReleasesIndexRoute
   '/settings/position': typeof MainLayoutSettingsPositionIndexRoute
   '/settings/rbac': typeof MainLayoutSettingsRbacIndexRoute
 }
@@ -75,15 +84,27 @@ export interface FileRoutesById {
   '/_main-layout/403': typeof MainLayout403Route
   '/_main-layout/': typeof MainLayoutIndexRoute
   '/_auth-layout/auth/login/': typeof AuthLayoutAuthLoginIndexRoute
+  '/_main-layout/applications/releases/': typeof MainLayoutApplicationsReleasesIndexRoute
   '/_main-layout/settings/position/': typeof MainLayoutSettingsPositionIndexRoute
   '/_main-layout/settings/rbac/': typeof MainLayoutSettingsRbacIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    '/' | '/403' | '/auth/login/' | '/settings/position/' | '/settings/rbac/'
+    | '/'
+    | '/403'
+    | '/auth/login/'
+    | '/applications/releases/'
+    | '/settings/position/'
+    | '/settings/rbac/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/403' | '/auth/login' | '/settings/position' | '/settings/rbac'
+  to:
+    | '/'
+    | '/403'
+    | '/auth/login'
+    | '/applications/releases'
+    | '/settings/position'
+    | '/settings/rbac'
   id:
     | '__root__'
     | '/_auth-layout'
@@ -91,6 +112,7 @@ export interface FileRouteTypes {
     | '/_main-layout/403'
     | '/_main-layout/'
     | '/_auth-layout/auth/login/'
+    | '/_main-layout/applications/releases/'
     | '/_main-layout/settings/position/'
     | '/_main-layout/settings/rbac/'
   fileRoutesById: FileRoutesById
@@ -137,6 +159,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthLayoutAuthLoginIndexRouteImport
       parentRoute: typeof AuthLayoutRoute
     }
+    '/_main-layout/applications/releases/': {
+      id: '/_main-layout/applications/releases/'
+      path: '/applications/releases'
+      fullPath: '/applications/releases/'
+      preLoaderRoute: typeof MainLayoutApplicationsReleasesIndexRouteImport
+      parentRoute: typeof MainLayoutRoute
+    }
     '/_main-layout/settings/position/': {
       id: '/_main-layout/settings/position/'
       path: '/settings/position'
@@ -169,6 +198,7 @@ const AuthLayoutRouteWithChildren = AuthLayoutRoute._addFileChildren(
 interface MainLayoutRouteChildren {
   MainLayout403Route: typeof MainLayout403Route
   MainLayoutIndexRoute: typeof MainLayoutIndexRoute
+  MainLayoutApplicationsReleasesIndexRoute: typeof MainLayoutApplicationsReleasesIndexRoute
   MainLayoutSettingsPositionIndexRoute: typeof MainLayoutSettingsPositionIndexRoute
   MainLayoutSettingsRbacIndexRoute: typeof MainLayoutSettingsRbacIndexRoute
 }
@@ -176,6 +206,8 @@ interface MainLayoutRouteChildren {
 const MainLayoutRouteChildren: MainLayoutRouteChildren = {
   MainLayout403Route: MainLayout403Route,
   MainLayoutIndexRoute: MainLayoutIndexRoute,
+  MainLayoutApplicationsReleasesIndexRoute:
+    MainLayoutApplicationsReleasesIndexRoute,
   MainLayoutSettingsPositionIndexRoute: MainLayoutSettingsPositionIndexRoute,
   MainLayoutSettingsRbacIndexRoute: MainLayoutSettingsRbacIndexRoute,
 }
