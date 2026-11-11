@@ -34,7 +34,7 @@ const config = defineConfig(({ mode }) => {
         hmr: {
           clientPort: 443,
         },
-        allowedHosts: ["eoffice-admin.localtest.me"]
+        allowedHosts: ["eoffice-admin.localtest.me", "admin.devt.dpdns.org"]
       }
     }
   )
