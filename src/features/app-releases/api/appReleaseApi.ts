@@ -19,6 +19,11 @@ export const deleteAppRelease = (
   id: number,
 ): Promise<ApiResponse<AppRelease>> => axiosClient.delete(`${ENDPOINT}/${id}`)
 
+export const publishAppRelease = (
+  id: number,
+): Promise<ApiResponse<AppRelease>> =>
+  axiosClient.post(`${ENDPOINT}/${id}/publish`, undefined, { timeout: 120_000 })
+
 export const uploadAppRelease = async (
   files: UploadAppReleaseReq,
   onProgress: (percent: number) => void,

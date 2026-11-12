@@ -1,7 +1,11 @@
 import { useRef, useState } from 'react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { App } from 'antd'
-import { deleteAppRelease, uploadAppRelease } from '../api/appReleaseApi'
+import {
+  deleteAppRelease,
+  publishAppRelease,
+  uploadAppRelease,
+} from '../api/appReleaseApi'
 import type { UploadAppReleaseReq } from '../api/dto/req/appReleaseReq'
 import { APP_RELEASES_QUERY_KEY } from '../queries/useAppReleases'
 
@@ -13,6 +17,21 @@ export function useDeleteAppRelease() {
     onSuccess: (res) => {
       void message.success(res.message || 'Xóa bản nháp thành công')
       void queryClient.invalidateQueries({ queryKey: APP_RELEASES_QUERY_KEY })
+    },
+    onError: (error) => {
+      void message.error(error.message)
+    },
+  })
+}
+
+export function usePublishAppRelease() {
+  const { message } = App.useApp()
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: publishAppRelease,
+    onSuccess: async (res) => {
+      void message.success(res.message || 'Phát hành phiên bản thành công')
+      await queryClient.invalidateQueries({ queryKey: APP_RELEASES_QUERY_KEY })
     },
     onError: (error) => {
       void message.error(error.message)

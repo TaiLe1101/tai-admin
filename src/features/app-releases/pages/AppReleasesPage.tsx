@@ -4,6 +4,7 @@ import {
   DeleteOutlined,
   EyeOutlined,
   ReloadOutlined,
+  RocketOutlined,
   UploadOutlined,
 } from '@ant-design/icons'
 import {
@@ -28,7 +29,10 @@ import AppReleaseDetailDrawer, {
   formatFileSize,
 } from '../components/AppReleaseDetailDrawer'
 import UploadAppReleaseModal from '../components/UploadAppReleaseModal'
-import { useDeleteAppRelease } from '../hooks/useAppReleaseMutations'
+import {
+  useDeleteAppRelease,
+  usePublishAppRelease,
+} from '../hooks/useAppReleaseMutations'
 import { useAppReleases } from '../queries/useAppReleases'
 import { appDayJs } from '#/shared/utils/appDayjs'
 
@@ -42,6 +46,7 @@ export default function AppReleasesPage() {
   const [detailId, setDetailId] = useState<number | null>(null)
   const query = useAppReleases(params)
   const deletion = useDeleteAppRelease()
+  const publication = usePublishAppRelease()
 
   useEffect(() => {
     setSearch(params.q ?? '')
@@ -108,7 +113,7 @@ export default function AppReleasesPage() {
     {
       title: 'Thao tác',
       key: 'actions',
-      width: 110,
+      width: 235,
       fixed: 'right',
       render: (_, release) => (
         <Space size={8}>
@@ -119,13 +124,39 @@ export default function AppReleasesPage() {
               onClick={() => setDetailId(release.id)}
             />
           </Tooltip>
+          {release.status === 'draft' && (
+            <Popconfirm
+              title={`Phát hành phiên bản ${release.version}?`}
+              description="Phiên bản này sẽ trở thành bản stable và được cung cấp cho người dùng."
+              okText="Phát hành"
+              cancelText="Hủy"
+              disabled={publication.isPending || deletion.isPending}
+              onConfirm={() => publication.mutateAsync(release.id)}
+            >
+              <Button
+                type="primary"
+                icon={<RocketOutlined />}
+                aria-label={`Phát hành phiên bản ${release.version}`}
+                disabled={publication.isPending || deletion.isPending}
+                loading={
+                  publication.isPending && publication.variables === release.id
+                }
+              >
+                Phát hành
+              </Button>
+            </Popconfirm>
+          )}
           <Popconfirm
             title={`Xóa phiên bản ${release.version}?`}
             description="Bản nháp và cả 3 file sẽ bị xóa."
             okText="Xóa"
             cancelText="Hủy"
             okButtonProps={{ danger: true }}
-            disabled={release.status !== 'draft' || deletion.isPending}
+            disabled={
+              release.status !== 'draft' ||
+              deletion.isPending ||
+              publication.isPending
+            }
             onConfirm={() =>
               new Promise<void>((resolve, reject) => {
                 deletion.mutate(release.id, {
@@ -146,7 +177,11 @@ export default function AppReleasesPage() {
                 danger
                 icon={<DeleteOutlined />}
                 aria-label={`Xóa phiên bản ${release.version}`}
-                disabled={release.status !== 'draft' || deletion.isPending}
+                disabled={
+                  release.status !== 'draft' ||
+                  deletion.isPending ||
+                  publication.isPending
+                }
                 loading={
                   deletion.isPending && deletion.variables === release.id
                 }
