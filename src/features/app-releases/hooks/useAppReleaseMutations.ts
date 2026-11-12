@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { App } from 'antd'
 import { deleteAppRelease, uploadAppRelease } from '../api/appReleaseApi'
@@ -24,9 +24,12 @@ export function useUploadAppRelease() {
   const { message } = App.useApp()
   const queryClient = useQueryClient()
   const [progress, setProgress] = useState(0)
+  const controller = useRef<AbortController | null>(null)
   const mutation = useMutation({
-    mutationFn: (files: UploadAppReleaseReq) =>
-      uploadAppRelease(files, setProgress),
+    mutationFn: (files: UploadAppReleaseReq) => {
+      controller.current = new AbortController()
+      return uploadAppRelease(files, setProgress, controller.current.signal)
+    },
     onMutate: () => {
       setProgress(0)
     },
@@ -35,8 +38,8 @@ export function useUploadAppRelease() {
       void queryClient.invalidateQueries({ queryKey: APP_RELEASES_QUERY_KEY })
     },
     onError: (error) => {
-      void message.error(error.message)
+      if (!controller.current?.signal.aborted) void message.error(error.message)
     },
   })
-  return { ...mutation, progress }
+  return { ...mutation, progress, cancel: () => controller.current?.abort() }
 }

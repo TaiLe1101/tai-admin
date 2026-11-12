@@ -9,6 +9,7 @@
     "start:dev": "vite dev --host",
     "generate-routes": "tsr generate",
     "build": "vite build",
+    "test:upload": "node --test tests/app-release-upload.test.mjs",
     "preview": "vite preview",
     "lint": "eslint",
     "format": "prettier --write . && eslint --fix",

@@ -45,12 +45,17 @@ export default function UploadAppReleaseModal({
     <Modal
       title="Tải phiên bản mới lên"
       open={open}
-      onCancel={onClose}
+      onCancel={() => {
+        if (upload.isPending) upload.cancel()
+        else onClose()
+      }}
       onOk={() => form.submit()}
       okText="Tải lên"
       cancelText="Hủy"
       confirmLoading={upload.isPending}
-      cancelButtonProps={{ disabled: upload.isPending }}
+      cancelButtonProps={{
+        disabled: upload.isPending && upload.progress === 100,
+      }}
       closable={!upload.isPending}
       keyboard={!upload.isPending}
       mask={{ closable: false }}
@@ -63,6 +68,10 @@ export default function UploadAppReleaseModal({
       <Typography.Paragraph type="secondary">
         Chọn đủ 3 file từ cùng một bản build. Phiên bản được đọc từ latest.yml.
         Tải lên thành công sẽ tạo bản nháp, chưa phát hành tới người dùng.
+      </Typography.Paragraph>
+      <Typography.Paragraph type="secondary">
+        File được chia thành các phần 5 MiB, tải tối đa 3 phần đồng thời và tự
+        thử lại khi kết nối lỗi. Có thể hủy trong khi đang tải.
       </Typography.Paragraph>
       <Form
         form={form}
