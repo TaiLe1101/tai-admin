@@ -4,6 +4,13 @@ export const ROUTE = {
     RELEASES: '/applications/releases',
   },
 
+  SAAS: {
+    OVERVIEW: '/saas',
+    PLANS: '/saas/plans',
+    TENANTS: '/saas/tenants',
+    UPGRADE_REQUESTS: '/saas/upgrade-requests',
+  },
+
   AUTH: {
     LOGIN: '/auth/login',
   },

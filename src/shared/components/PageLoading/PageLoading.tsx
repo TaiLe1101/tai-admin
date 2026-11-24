@@ -12,7 +12,7 @@ export interface PageLoadingProps {
 export default function PageLoading({
   fullScreen = true,
   tip,
-  logoSize = 72,
+  logoSize: _logoSize = 72,
   className = '',
 }: PageLoadingProps) {
   const containerClass = fullScreen

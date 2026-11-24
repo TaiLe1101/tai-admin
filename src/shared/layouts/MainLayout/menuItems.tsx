@@ -2,7 +2,12 @@ import { type PermissionCode } from '#/shared/constants/permissions'
 import { ROUTE } from '#/shared/constants/route'
 import {
   AppstoreOutlined,
+  CloudServerOutlined,
+  CrownOutlined,
   DashboardOutlined,
+  PieChartOutlined,
+  RiseOutlined,
+  TeamOutlined,
   UnorderedListOutlined,
 } from '@ant-design/icons'
 import type { MenuProps } from 'antd'
@@ -74,6 +79,33 @@ export const menuItems: AppMenuItem[] = [
         key: ROUTE.APPLICATIONS.RELEASES,
         label: 'Danh sách phiên bản',
         icon: <UnorderedListOutlined />,
+      },
+    ],
+  },
+  {
+    key: 'saas',
+    icon: <CloudServerOutlined />,
+    label: 'Quản lý SaaS',
+    children: [
+      {
+        key: ROUTE.SAAS.OVERVIEW,
+        label: 'Tổng quan SaaS',
+        icon: <PieChartOutlined />,
+      },
+      {
+        key: ROUTE.SAAS.PLANS,
+        label: 'Quản lý gói',
+        icon: <CrownOutlined />,
+      },
+      {
+        key: ROUTE.SAAS.TENANTS,
+        label: 'Quản lý Tenant',
+        icon: <TeamOutlined />,
+      },
+      {
+        key: ROUTE.SAAS.UPGRADE_REQUESTS,
+        label: 'Yêu cầu nâng cấp',
+        icon: <RiseOutlined />,
       },
     ],
   },

@@ -13,8 +13,12 @@ import { Route as AuthLayoutRouteImport } from './routes/_auth-layout'
 import { Route as MainLayoutRouteImport } from './routes/_main-layout'
 import { Route as MainLayoutIndexRouteImport } from './routes/_main-layout/index'
 import { Route as MainLayout403RouteImport } from './routes/_main-layout/403'
+import { Route as MainLayoutSaasIndexRouteImport } from './routes/_main-layout/saas/index'
 import { Route as AuthLayoutAuthLoginIndexRouteImport } from './routes/_auth-layout/auth/login/index'
 import { Route as MainLayoutApplicationsReleasesIndexRouteImport } from './routes/_main-layout/applications/releases/index'
+import { Route as MainLayoutSaasPlansIndexRouteImport } from './routes/_main-layout/saas/plans/index'
+import { Route as MainLayoutSaasTenantsIndexRouteImport } from './routes/_main-layout/saas/tenants/index'
+import { Route as MainLayoutSaasUpgradeRequestsIndexRouteImport } from './routes/_main-layout/saas/upgrade-requests/index'
 import { Route as MainLayoutSettingsPositionIndexRouteImport } from './routes/_main-layout/settings/position/index'
 import { Route as MainLayoutSettingsRbacIndexRouteImport } from './routes/_main-layout/settings/rbac/index'
 
@@ -36,6 +40,11 @@ const MainLayout403Route = MainLayout403RouteImport.update({
   path: '/403',
   getParentRoute: () => MainLayoutRoute,
 } as any)
+const MainLayoutSaasIndexRoute = MainLayoutSaasIndexRouteImport.update({
+  id: '/saas/',
+  path: '/saas/',
+  getParentRoute: () => MainLayoutRoute,
+} as any)
 const AuthLayoutAuthLoginIndexRoute =
   AuthLayoutAuthLoginIndexRouteImport.update({
     id: '/auth/login/',
@@ -46,6 +55,24 @@ const MainLayoutApplicationsReleasesIndexRoute =
   MainLayoutApplicationsReleasesIndexRouteImport.update({
     id: '/applications/releases/',
     path: '/applications/releases/',
+    getParentRoute: () => MainLayoutRoute,
+  } as any)
+const MainLayoutSaasPlansIndexRoute =
+  MainLayoutSaasPlansIndexRouteImport.update({
+    id: '/saas/plans/',
+    path: '/saas/plans/',
+    getParentRoute: () => MainLayoutRoute,
+  } as any)
+const MainLayoutSaasTenantsIndexRoute =
+  MainLayoutSaasTenantsIndexRouteImport.update({
+    id: '/saas/tenants/',
+    path: '/saas/tenants/',
+    getParentRoute: () => MainLayoutRoute,
+  } as any)
+const MainLayoutSaasUpgradeRequestsIndexRoute =
+  MainLayoutSaasUpgradeRequestsIndexRouteImport.update({
+    id: '/saas/upgrade-requests/',
+    path: '/saas/upgrade-requests/',
     getParentRoute: () => MainLayoutRoute,
   } as any)
 const MainLayoutSettingsPositionIndexRoute =
@@ -64,16 +91,24 @@ const MainLayoutSettingsRbacIndexRoute =
 export interface FileRoutesByFullPath {
   '/': typeof MainLayoutIndexRoute
   '/403': typeof MainLayout403Route
+  '/saas/': typeof MainLayoutSaasIndexRoute
   '/auth/login/': typeof AuthLayoutAuthLoginIndexRoute
   '/applications/releases/': typeof MainLayoutApplicationsReleasesIndexRoute
+  '/saas/plans/': typeof MainLayoutSaasPlansIndexRoute
+  '/saas/tenants/': typeof MainLayoutSaasTenantsIndexRoute
+  '/saas/upgrade-requests/': typeof MainLayoutSaasUpgradeRequestsIndexRoute
   '/settings/position/': typeof MainLayoutSettingsPositionIndexRoute
   '/settings/rbac/': typeof MainLayoutSettingsRbacIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof MainLayoutIndexRoute
   '/403': typeof MainLayout403Route
+  '/saas': typeof MainLayoutSaasIndexRoute
   '/auth/login': typeof AuthLayoutAuthLoginIndexRoute
   '/applications/releases': typeof MainLayoutApplicationsReleasesIndexRoute
+  '/saas/plans': typeof MainLayoutSaasPlansIndexRoute
+  '/saas/tenants': typeof MainLayoutSaasTenantsIndexRoute
+  '/saas/upgrade-requests': typeof MainLayoutSaasUpgradeRequestsIndexRoute
   '/settings/position': typeof MainLayoutSettingsPositionIndexRoute
   '/settings/rbac': typeof MainLayoutSettingsRbacIndexRoute
 }
@@ -83,8 +118,12 @@ export interface FileRoutesById {
   '/_main-layout': typeof MainLayoutRouteWithChildren
   '/_main-layout/403': typeof MainLayout403Route
   '/_main-layout/': typeof MainLayoutIndexRoute
+  '/_main-layout/saas/': typeof MainLayoutSaasIndexRoute
   '/_auth-layout/auth/login/': typeof AuthLayoutAuthLoginIndexRoute
   '/_main-layout/applications/releases/': typeof MainLayoutApplicationsReleasesIndexRoute
+  '/_main-layout/saas/plans/': typeof MainLayoutSaasPlansIndexRoute
+  '/_main-layout/saas/tenants/': typeof MainLayoutSaasTenantsIndexRoute
+  '/_main-layout/saas/upgrade-requests/': typeof MainLayoutSaasUpgradeRequestsIndexRoute
   '/_main-layout/settings/position/': typeof MainLayoutSettingsPositionIndexRoute
   '/_main-layout/settings/rbac/': typeof MainLayoutSettingsRbacIndexRoute
 }
@@ -93,16 +132,24 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/403'
+    | '/saas/'
     | '/auth/login/'
     | '/applications/releases/'
+    | '/saas/plans/'
+    | '/saas/tenants/'
+    | '/saas/upgrade-requests/'
     | '/settings/position/'
     | '/settings/rbac/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/403'
+    | '/saas'
     | '/auth/login'
     | '/applications/releases'
+    | '/saas/plans'
+    | '/saas/tenants'
+    | '/saas/upgrade-requests'
     | '/settings/position'
     | '/settings/rbac'
   id:
@@ -111,8 +158,12 @@ export interface FileRouteTypes {
     | '/_main-layout'
     | '/_main-layout/403'
     | '/_main-layout/'
+    | '/_main-layout/saas/'
     | '/_auth-layout/auth/login/'
     | '/_main-layout/applications/releases/'
+    | '/_main-layout/saas/plans/'
+    | '/_main-layout/saas/tenants/'
+    | '/_main-layout/saas/upgrade-requests/'
     | '/_main-layout/settings/position/'
     | '/_main-layout/settings/rbac/'
   fileRoutesById: FileRoutesById
@@ -152,6 +203,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MainLayout403RouteImport
       parentRoute: typeof MainLayoutRoute
     }
+    '/_main-layout/saas/': {
+      id: '/_main-layout/saas/'
+      path: '/saas'
+      fullPath: '/saas/'
+      preLoaderRoute: typeof MainLayoutSaasIndexRouteImport
+      parentRoute: typeof MainLayoutRoute
+    }
     '/_auth-layout/auth/login/': {
       id: '/_auth-layout/auth/login/'
       path: '/auth/login'
@@ -164,6 +222,27 @@ declare module '@tanstack/react-router' {
       path: '/applications/releases'
       fullPath: '/applications/releases/'
       preLoaderRoute: typeof MainLayoutApplicationsReleasesIndexRouteImport
+      parentRoute: typeof MainLayoutRoute
+    }
+    '/_main-layout/saas/plans/': {
+      id: '/_main-layout/saas/plans/'
+      path: '/saas/plans'
+      fullPath: '/saas/plans/'
+      preLoaderRoute: typeof MainLayoutSaasPlansIndexRouteImport
+      parentRoute: typeof MainLayoutRoute
+    }
+    '/_main-layout/saas/tenants/': {
+      id: '/_main-layout/saas/tenants/'
+      path: '/saas/tenants'
+      fullPath: '/saas/tenants/'
+      preLoaderRoute: typeof MainLayoutSaasTenantsIndexRouteImport
+      parentRoute: typeof MainLayoutRoute
+    }
+    '/_main-layout/saas/upgrade-requests/': {
+      id: '/_main-layout/saas/upgrade-requests/'
+      path: '/saas/upgrade-requests'
+      fullPath: '/saas/upgrade-requests/'
+      preLoaderRoute: typeof MainLayoutSaasUpgradeRequestsIndexRouteImport
       parentRoute: typeof MainLayoutRoute
     }
     '/_main-layout/settings/position/': {
@@ -198,7 +277,11 @@ const AuthLayoutRouteWithChildren = AuthLayoutRoute._addFileChildren(
 interface MainLayoutRouteChildren {
   MainLayout403Route: typeof MainLayout403Route
   MainLayoutIndexRoute: typeof MainLayoutIndexRoute
+  MainLayoutSaasIndexRoute: typeof MainLayoutSaasIndexRoute
   MainLayoutApplicationsReleasesIndexRoute: typeof MainLayoutApplicationsReleasesIndexRoute
+  MainLayoutSaasPlansIndexRoute: typeof MainLayoutSaasPlansIndexRoute
+  MainLayoutSaasTenantsIndexRoute: typeof MainLayoutSaasTenantsIndexRoute
+  MainLayoutSaasUpgradeRequestsIndexRoute: typeof MainLayoutSaasUpgradeRequestsIndexRoute
   MainLayoutSettingsPositionIndexRoute: typeof MainLayoutSettingsPositionIndexRoute
   MainLayoutSettingsRbacIndexRoute: typeof MainLayoutSettingsRbacIndexRoute
 }
@@ -206,8 +289,13 @@ interface MainLayoutRouteChildren {
 const MainLayoutRouteChildren: MainLayoutRouteChildren = {
   MainLayout403Route: MainLayout403Route,
   MainLayoutIndexRoute: MainLayoutIndexRoute,
+  MainLayoutSaasIndexRoute: MainLayoutSaasIndexRoute,
   MainLayoutApplicationsReleasesIndexRoute:
     MainLayoutApplicationsReleasesIndexRoute,
+  MainLayoutSaasPlansIndexRoute: MainLayoutSaasPlansIndexRoute,
+  MainLayoutSaasTenantsIndexRoute: MainLayoutSaasTenantsIndexRoute,
+  MainLayoutSaasUpgradeRequestsIndexRoute:
+    MainLayoutSaasUpgradeRequestsIndexRoute,
   MainLayoutSettingsPositionIndexRoute: MainLayoutSettingsPositionIndexRoute,
   MainLayoutSettingsRbacIndexRoute: MainLayoutSettingsRbacIndexRoute,
 }
