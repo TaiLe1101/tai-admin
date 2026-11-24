@@ -6,6 +6,9 @@ import type {
   AssignSubscriptionReq,
   CreatePlanReq,
   CreateTenantReq,
+  PaymentOrderDto,
+  PaymentOrderListQuery,
+  PaymentOrderReconcileResultDto,
   PlanDto,
   QuotaDto,
   RejectUpgradeRequestReq,
@@ -14,6 +17,10 @@ import type {
   SaasPaginatedResponse,
   SaasUsersQuery,
   SaasUserSummaryDto,
+  SepayEventListQuery,
+  SepayReconcileRunResultDto,
+  SepayReconcileSummaryDto,
+  SepayWebhookEventAdminDto,
   SubscriptionDto,
   TenantDetailDto,
   TenantDto,
@@ -115,3 +122,31 @@ export const getSaasUsers = (
   params: SaasUsersQuery,
 ): Promise<SaasPaginatedResponse<SaasUserSummaryDto>> =>
   axiosClient.get(`${ENDPOINT}/users`, { params })
+
+export const getSaasPaymentsSummary = (): Promise<
+  ApiResponse<SepayReconcileSummaryDto>
+> => axiosClient.get(`${ENDPOINT}/payments/summary`)
+
+export const getSaasPaymentOrders = (
+  params: PaymentOrderListQuery,
+): Promise<SaasPaginatedResponse<PaymentOrderDto>> =>
+  axiosClient.get(`${ENDPOINT}/payments/orders`, { params })
+
+export const cancelSaasPaymentOrder = (
+  id: number,
+): Promise<ApiResponse<PaymentOrderDto>> =>
+  axiosClient.post(`${ENDPOINT}/payments/orders/${id}/cancel`)
+
+export const reconcileSaasPaymentOrder = (
+  id: number,
+): Promise<ApiResponse<PaymentOrderReconcileResultDto>> =>
+  axiosClient.post(`${ENDPOINT}/payments/orders/${id}/reconcile`)
+
+export const getSaasPaymentEvents = (
+  params: SepayEventListQuery,
+): Promise<SaasPaginatedResponse<SepayWebhookEventAdminDto>> =>
+  axiosClient.get(`${ENDPOINT}/payments/events`, { params })
+
+export const runSaasPaymentsReconcile = (): Promise<
+  ApiResponse<SepayReconcileRunResultDto>
+> => axiosClient.post(`${ENDPOINT}/payments/reconcile`)

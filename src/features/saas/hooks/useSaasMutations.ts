@@ -4,12 +4,15 @@ import {
   addSaasTenantMember,
   approveSaasUpgradeRequest,
   assignSaasTenantSubscription,
+  cancelSaasPaymentOrder,
   createSaasPlan,
   createSaasTenant,
   deleteSaasPlan,
+  reconcileSaasPaymentOrder,
   rejectSaasUpgradeRequest,
   removeSaasTenantMember,
   resetSaasTenantUsage,
+  runSaasPaymentsReconcile,
   updateSaasPlan,
   updateSaasTenant,
 } from '../api/saasApi'
@@ -286,6 +289,99 @@ export function useRejectSaasUpgradeRequest() {
       void message.success(res.message || 'Đã từ chối yêu cầu nâng cấp')
       void queryClient.invalidateQueries({
         queryKey: SAAS_QUERY_KEYS.upgradeRequests(),
+      })
+      void queryClient.invalidateQueries({
+        queryKey: SAAS_QUERY_KEYS.overview(),
+      })
+    },
+    onError: (error) => {
+      void message.error(error.message)
+    },
+  })
+}
+
+export function useCancelSaasPaymentOrder() {
+  const { message } = App.useApp()
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (id: number) => cancelSaasPaymentOrder(id),
+    onSuccess: (res) => {
+      void message.success(res.message || 'Đã hủy đơn thanh toán')
+      void queryClient.invalidateQueries({
+        queryKey: SAAS_QUERY_KEYS.paymentsSummary(),
+      })
+      void queryClient.invalidateQueries({
+        queryKey: SAAS_QUERY_KEYS.paymentOrders(),
+      })
+      void queryClient.invalidateQueries({
+        queryKey: SAAS_QUERY_KEYS.overview(),
+      })
+    },
+    onError: (error) => {
+      void message.error(error.message)
+    },
+  })
+}
+
+export function useReconcileSaasPaymentOrder() {
+  const { message } = App.useApp()
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (id: number) => reconcileSaasPaymentOrder(id),
+    onSuccess: (res) => {
+      const result = res.data
+      if (result.matched) {
+        void message.success(
+          `Đối soát khớp đơn ${result.order.paymentCode} và đã kích hoạt gói!`,
+        )
+      } else {
+        void message.info(
+          `Chưa thấy giao dịch khớp cho đơn ${result.order.paymentCode} (đã kiểm tra ${result.checkedTransactions} giao dịch)`,
+        )
+      }
+      void queryClient.invalidateQueries({
+        queryKey: SAAS_QUERY_KEYS.paymentsSummary(),
+      })
+      void queryClient.invalidateQueries({
+        queryKey: SAAS_QUERY_KEYS.paymentOrders(),
+      })
+      void queryClient.invalidateQueries({
+        queryKey: SAAS_QUERY_KEYS.paymentEvents(),
+      })
+      void queryClient.invalidateQueries({
+        queryKey: SAAS_QUERY_KEYS.tenants(),
+      })
+      void queryClient.invalidateQueries({
+        queryKey: SAAS_QUERY_KEYS.overview(),
+      })
+    },
+    onError: (error) => {
+      void message.error(error.message)
+    },
+  })
+}
+
+export function useRunSaasPaymentsReconcile() {
+  const { message } = App.useApp()
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: () => runSaasPaymentsReconcile(),
+    onSuccess: (res) => {
+      const r = res.data
+      void message.success(
+        `Đối soát SePay hoàn tất: tải ${r.fetched} giao dịch, khớp ${r.matched}, chưa khớp ${r.unmatched}, đã xử lý ${r.alreadyHandled}`,
+      )
+      void queryClient.invalidateQueries({
+        queryKey: SAAS_QUERY_KEYS.paymentsSummary(),
+      })
+      void queryClient.invalidateQueries({
+        queryKey: SAAS_QUERY_KEYS.paymentOrders(),
+      })
+      void queryClient.invalidateQueries({
+        queryKey: SAAS_QUERY_KEYS.paymentEvents(),
+      })
+      void queryClient.invalidateQueries({
+        queryKey: SAAS_QUERY_KEYS.tenants(),
       })
       void queryClient.invalidateQueries({
         queryKey: SAAS_QUERY_KEYS.overview(),

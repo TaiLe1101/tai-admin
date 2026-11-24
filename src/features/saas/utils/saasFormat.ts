@@ -1,8 +1,11 @@
 import { formatCurrency } from '#/shared/utils/formatCurrency'
 import type {
   BillingCycle,
+  PaymentOrderStatus,
+  PaymentPaidSource,
   PlanDto,
   SaasUserSummaryDto,
+  SepayEventStatus,
   SubscriptionStatus,
   TenantMemberRole,
   TenantStatus,
@@ -116,4 +119,59 @@ export function getDefaultDurationDays(
 ): number | null {
   if (billingCycle === 'LIFETIME' || isFreePlan(plan)) return null
   return billingCycle === 'YEARLY' ? 365 : 30
+}
+
+export const PAYMENT_ORDER_STATUS_META: Record<
+  PaymentOrderStatus,
+  { label: string; color: string }
+> = {
+  PENDING: { label: 'Chờ thanh toán', color: 'gold' },
+  PAID: { label: 'Đã thanh toán', color: 'green' },
+  EXPIRED: { label: 'Hết hạn', color: 'default' },
+  CANCELED: { label: 'Đã hủy', color: 'red' },
+}
+
+export const PAYMENT_PAID_SOURCE_META: Record<
+  PaymentPaidSource,
+  { label: string; color: string }
+> = {
+  WEBHOOK: { label: 'Webhook', color: 'blue' },
+  RECONCILIATION: { label: 'Đối soát API', color: 'purple' },
+}
+
+export const SEPAY_EVENT_STATUS_META: Record<
+  SepayEventStatus,
+  { label: string; color: string }
+> = {
+  RECEIVED: { label: 'Đã nhận', color: 'default' },
+  PROCESSED: { label: 'Đã xử lý', color: 'green' },
+  UNMATCHED: { label: 'Cần đối soát', color: 'orange' },
+  FAILED: { label: 'Lỗi xử lý', color: 'red' },
+}
+
+const UNMATCHED_REASON_LABELS: Record<string, string> = {
+  AMOUNT_MISMATCH: 'Sai số tiền chuyển khoản',
+  INVALID_AMOUNT: 'Số tiền giao dịch không hợp lệ',
+  UNDERPAID: 'Chuyển thiếu tiền',
+  OVERPAID: 'Chuyển dư tiền',
+  ACCOUNT_MISMATCH: 'Sai tài khoản thụ hưởng',
+  ORDER_EXPIRED: 'Thanh toán sau khi đơn hết hạn',
+  ORDER_CANCELED: 'Thanh toán sau khi đơn đã hủy',
+  LATE_PAYMENT: 'Thanh toán muộn (đơn hết hạn / đã hủy)',
+  ORDER_NOT_PENDING: 'Đơn không còn ở trạng thái chờ',
+  SECOND_PAYMENT: 'Thanh toán trùng lặp cho đơn đã trả',
+  DUPLICATE_PAYMENT: 'Thanh toán trùng lặp',
+  ORDER_NOT_FOUND: 'Không tìm thấy đơn thanh toán',
+  UNKNOWN_CODE: 'Không rõ mã thanh toán',
+  EMPTY_CODE: 'Thiếu mã thanh toán (code)',
+  MISSING_CODE: 'Thiếu mã thanh toán (code)',
+  NON_INCOMING_TRANSFER: 'Giao dịch không phải tiền vào',
+  OUTGOING_TRANSFER: 'Giao dịch tiền ra (không phải tiền vào)',
+  INVALID_TRANSFER_TYPE: 'Loại giao dịch không hợp lệ',
+}
+
+export function formatUnmatchedReason(reason: string | null): string {
+  if (!reason) return '—'
+  const normalized = reason.trim().toUpperCase()
+  return UNMATCHED_REASON_LABELS[normalized] ?? reason
 }

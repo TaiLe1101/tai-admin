@@ -260,6 +260,107 @@ export interface SaasUsersQuery {
   search?: string
 }
 
+export type PaymentOrderStatus = 'PENDING' | 'PAID' | 'EXPIRED' | 'CANCELED'
+export type PaymentPaidSource = 'WEBHOOK' | 'RECONCILIATION'
+export type SepayEventStatus = 'RECEIVED' | 'PROCESSED' | 'UNMATCHED' | 'FAILED'
+export type SepayEnv = 'sandbox' | 'production'
+
+export interface PaymentOrderDto {
+  id: number
+  paymentCode: string
+  tenantId: number
+  userId: number
+  planId: number
+  billingCycle: UpgradeRequestBillingCycle
+  amount: number
+  currency: string
+  status: PaymentOrderStatus
+  bankCode: string
+  accountNumber: string
+  accountName: string
+  transferContent: string
+  qrUrl: string | null
+  expiresAt: string
+  paidAt: string | null
+  paidAmount: number | null
+  paidSource: PaymentPaidSource | null
+  paidReferenceCode: string | null
+  createdAt: string
+  plan?: { id: number; code: string; name: string }
+  tenant?: { id: number; code: string; name: string }
+}
+
+export interface SepayWebhookEventAdminDto {
+  id: number
+  sepayWebhookId: string
+  gateway: string
+  transactionDate: string
+  maskedAccountNumber: string
+  subAccount: string | null
+  code: string | null
+  transferType: string
+  transferAmount: number
+  referenceCode: string | null
+  status: SepayEventStatus
+  verdict: boolean
+  unmatchedReason: string | null
+  orderId: number | null
+  paymentCode: string | null
+  createdAt: string
+}
+
+export interface SepayReconcileSummaryDto {
+  enabled: boolean
+  env: SepayEnv
+  lastRunAt: string | null
+  lastCursorId: string | null
+  lastFetchedCount: number
+  lastMatchedCount: number
+  lastUnmatchedCount: number
+  pendingOrders: number
+  paidOrders: number
+  unmatchedEvents: number
+}
+
+export interface PaymentOrderReconcileResultDto {
+  matched: boolean
+  order: PaymentOrderDto
+  checkedTransactions: number
+}
+
+export interface SepayReconcileRunResultDto {
+  fetched: number
+  matched: number
+  unmatched: number
+  alreadyHandled: number
+  cursorId: string | null
+}
+
+export interface PaymentOrderListQuery {
+  page: number
+  limit: number
+  status?: PaymentOrderStatus
+  search?: string
+}
+
+export interface SepayEventListQuery {
+  page: number
+  limit: number
+  status?: SepayEventStatus
+  search?: string
+}
+
+export type SaasPaymentsTab = 'orders' | 'events'
+
+export interface SaasPaymentsRouteSearch {
+  tab: SaasPaymentsTab
+  page: number
+  limit: number
+  orderStatus?: PaymentOrderStatus
+  eventStatus?: SepayEventStatus
+  search?: string
+}
+
 export function getPaginationTotal(pagination?: SaasPagination): number {
   return pagination?.total ?? pagination?.totalItems ?? 0
 }

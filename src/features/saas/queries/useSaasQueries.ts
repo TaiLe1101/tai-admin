@@ -3,6 +3,9 @@ import { useQuery } from '@tanstack/react-query'
 import { App } from 'antd'
 import {
   getSaasOverview,
+  getSaasPaymentEvents,
+  getSaasPaymentOrders,
+  getSaasPaymentsSummary,
   getSaasPlans,
   getSaasTenantDetail,
   getSaasTenants,
@@ -10,7 +13,9 @@ import {
   getSaasUsers,
 } from '../api/saasApi'
 import type {
+  PaymentOrderListQuery,
   SaasUsersQuery,
+  SepayEventListQuery,
   TenantListQuery,
   UpgradeRequestListQuery,
 } from '../api/dto/saasTypes'
@@ -28,6 +33,13 @@ export const SAAS_QUERY_KEYS = {
   upgradeRequestList: (params: UpgradeRequestListQuery) =>
     ['saas', 'upgrade-requests', 'list', params] as const,
   users: (params: SaasUsersQuery) => ['saas', 'users', params] as const,
+  paymentsSummary: () => ['saas', 'payments', 'summary'] as const,
+  paymentOrders: () => ['saas', 'payments', 'orders'] as const,
+  paymentOrderList: (params: PaymentOrderListQuery) =>
+    ['saas', 'payments', 'orders', 'list', params] as const,
+  paymentEvents: () => ['saas', 'payments', 'events'] as const,
+  paymentEventList: (params: SepayEventListQuery) =>
+    ['saas', 'payments', 'events', 'list', params] as const,
 }
 
 function useQueryError(error: Error | null) {
@@ -87,6 +99,41 @@ export function useSaasUsers(params: SaasUsersQuery, enabled = true) {
   const query = useQuery({
     queryKey: SAAS_QUERY_KEYS.users(params),
     queryFn: async () => (await getSaasUsers(params)).data,
+    enabled,
+  })
+  useQueryError(query.error)
+  return query
+}
+
+export function useSaasPaymentsSummary() {
+  const query = useQuery({
+    queryKey: SAAS_QUERY_KEYS.paymentsSummary(),
+    queryFn: async () => (await getSaasPaymentsSummary()).data,
+  })
+  useQueryError(query.error)
+  return query
+}
+
+export function useSaasPaymentOrders(
+  params: PaymentOrderListQuery,
+  enabled = true,
+) {
+  const query = useQuery({
+    queryKey: SAAS_QUERY_KEYS.paymentOrderList(params),
+    queryFn: () => getSaasPaymentOrders(params),
+    enabled,
+  })
+  useQueryError(query.error)
+  return query
+}
+
+export function useSaasPaymentEvents(
+  params: SepayEventListQuery,
+  enabled = true,
+) {
+  const query = useQuery({
+    queryKey: SAAS_QUERY_KEYS.paymentEventList(params),
+    queryFn: () => getSaasPaymentEvents(params),
     enabled,
   })
   useQueryError(query.error)

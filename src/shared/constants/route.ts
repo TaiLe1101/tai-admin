@@ -9,6 +9,7 @@ export const ROUTE = {
     PLANS: '/saas/plans',
     TENANTS: '/saas/tenants',
     UPGRADE_REQUESTS: '/saas/upgrade-requests',
+    PAYMENTS: '/saas/payments',
   },
 
   AUTH: {

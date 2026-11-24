@@ -16,6 +16,7 @@ import { Route as MainLayout403RouteImport } from './routes/_main-layout/403'
 import { Route as MainLayoutSaasIndexRouteImport } from './routes/_main-layout/saas/index'
 import { Route as AuthLayoutAuthLoginIndexRouteImport } from './routes/_auth-layout/auth/login/index'
 import { Route as MainLayoutApplicationsReleasesIndexRouteImport } from './routes/_main-layout/applications/releases/index'
+import { Route as MainLayoutSaasPaymentsIndexRouteImport } from './routes/_main-layout/saas/payments/index'
 import { Route as MainLayoutSaasPlansIndexRouteImport } from './routes/_main-layout/saas/plans/index'
 import { Route as MainLayoutSaasTenantsIndexRouteImport } from './routes/_main-layout/saas/tenants/index'
 import { Route as MainLayoutSaasUpgradeRequestsIndexRouteImport } from './routes/_main-layout/saas/upgrade-requests/index'
@@ -57,6 +58,12 @@ const MainLayoutApplicationsReleasesIndexRoute =
     path: '/applications/releases/',
     getParentRoute: () => MainLayoutRoute,
   } as any)
+const MainLayoutSaasPaymentsIndexRoute =
+  MainLayoutSaasPaymentsIndexRouteImport.update({
+    id: '/saas/payments/',
+    path: '/saas/payments/',
+    getParentRoute: () => MainLayoutRoute,
+  } as any)
 const MainLayoutSaasPlansIndexRoute =
   MainLayoutSaasPlansIndexRouteImport.update({
     id: '/saas/plans/',
@@ -94,6 +101,7 @@ export interface FileRoutesByFullPath {
   '/saas/': typeof MainLayoutSaasIndexRoute
   '/auth/login/': typeof AuthLayoutAuthLoginIndexRoute
   '/applications/releases/': typeof MainLayoutApplicationsReleasesIndexRoute
+  '/saas/payments/': typeof MainLayoutSaasPaymentsIndexRoute
   '/saas/plans/': typeof MainLayoutSaasPlansIndexRoute
   '/saas/tenants/': typeof MainLayoutSaasTenantsIndexRoute
   '/saas/upgrade-requests/': typeof MainLayoutSaasUpgradeRequestsIndexRoute
@@ -106,6 +114,7 @@ export interface FileRoutesByTo {
   '/saas': typeof MainLayoutSaasIndexRoute
   '/auth/login': typeof AuthLayoutAuthLoginIndexRoute
   '/applications/releases': typeof MainLayoutApplicationsReleasesIndexRoute
+  '/saas/payments': typeof MainLayoutSaasPaymentsIndexRoute
   '/saas/plans': typeof MainLayoutSaasPlansIndexRoute
   '/saas/tenants': typeof MainLayoutSaasTenantsIndexRoute
   '/saas/upgrade-requests': typeof MainLayoutSaasUpgradeRequestsIndexRoute
@@ -121,6 +130,7 @@ export interface FileRoutesById {
   '/_main-layout/saas/': typeof MainLayoutSaasIndexRoute
   '/_auth-layout/auth/login/': typeof AuthLayoutAuthLoginIndexRoute
   '/_main-layout/applications/releases/': typeof MainLayoutApplicationsReleasesIndexRoute
+  '/_main-layout/saas/payments/': typeof MainLayoutSaasPaymentsIndexRoute
   '/_main-layout/saas/plans/': typeof MainLayoutSaasPlansIndexRoute
   '/_main-layout/saas/tenants/': typeof MainLayoutSaasTenantsIndexRoute
   '/_main-layout/saas/upgrade-requests/': typeof MainLayoutSaasUpgradeRequestsIndexRoute
@@ -135,6 +145,7 @@ export interface FileRouteTypes {
     | '/saas/'
     | '/auth/login/'
     | '/applications/releases/'
+    | '/saas/payments/'
     | '/saas/plans/'
     | '/saas/tenants/'
     | '/saas/upgrade-requests/'
@@ -147,6 +158,7 @@ export interface FileRouteTypes {
     | '/saas'
     | '/auth/login'
     | '/applications/releases'
+    | '/saas/payments'
     | '/saas/plans'
     | '/saas/tenants'
     | '/saas/upgrade-requests'
@@ -161,6 +173,7 @@ export interface FileRouteTypes {
     | '/_main-layout/saas/'
     | '/_auth-layout/auth/login/'
     | '/_main-layout/applications/releases/'
+    | '/_main-layout/saas/payments/'
     | '/_main-layout/saas/plans/'
     | '/_main-layout/saas/tenants/'
     | '/_main-layout/saas/upgrade-requests/'
@@ -224,6 +237,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MainLayoutApplicationsReleasesIndexRouteImport
       parentRoute: typeof MainLayoutRoute
     }
+    '/_main-layout/saas/payments/': {
+      id: '/_main-layout/saas/payments/'
+      path: '/saas/payments'
+      fullPath: '/saas/payments/'
+      preLoaderRoute: typeof MainLayoutSaasPaymentsIndexRouteImport
+      parentRoute: typeof MainLayoutRoute
+    }
     '/_main-layout/saas/plans/': {
       id: '/_main-layout/saas/plans/'
       path: '/saas/plans'
@@ -279,6 +299,7 @@ interface MainLayoutRouteChildren {
   MainLayoutIndexRoute: typeof MainLayoutIndexRoute
   MainLayoutSaasIndexRoute: typeof MainLayoutSaasIndexRoute
   MainLayoutApplicationsReleasesIndexRoute: typeof MainLayoutApplicationsReleasesIndexRoute
+  MainLayoutSaasPaymentsIndexRoute: typeof MainLayoutSaasPaymentsIndexRoute
   MainLayoutSaasPlansIndexRoute: typeof MainLayoutSaasPlansIndexRoute
   MainLayoutSaasTenantsIndexRoute: typeof MainLayoutSaasTenantsIndexRoute
   MainLayoutSaasUpgradeRequestsIndexRoute: typeof MainLayoutSaasUpgradeRequestsIndexRoute
@@ -292,6 +313,7 @@ const MainLayoutRouteChildren: MainLayoutRouteChildren = {
   MainLayoutSaasIndexRoute: MainLayoutSaasIndexRoute,
   MainLayoutApplicationsReleasesIndexRoute:
     MainLayoutApplicationsReleasesIndexRoute,
+  MainLayoutSaasPaymentsIndexRoute: MainLayoutSaasPaymentsIndexRoute,
   MainLayoutSaasPlansIndexRoute: MainLayoutSaasPlansIndexRoute,
   MainLayoutSaasTenantsIndexRoute: MainLayoutSaasTenantsIndexRoute,
   MainLayoutSaasUpgradeRequestsIndexRoute:

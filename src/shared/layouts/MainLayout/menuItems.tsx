@@ -3,6 +3,7 @@ import { ROUTE } from '#/shared/constants/route'
 import {
   AppstoreOutlined,
   CloudServerOutlined,
+  CreditCardOutlined,
   CrownOutlined,
   DashboardOutlined,
   PieChartOutlined,
@@ -106,6 +107,11 @@ export const menuItems: AppMenuItem[] = [
         key: ROUTE.SAAS.UPGRADE_REQUESTS,
         label: 'Yêu cầu nâng cấp',
         icon: <RiseOutlined />,
+      },
+      {
+        key: ROUTE.SAAS.PAYMENTS,
+        label: 'Thanh toán SePay',
+        icon: <CreditCardOutlined />,
       },
     ],
   },
