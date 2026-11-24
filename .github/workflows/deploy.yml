@@ -1,0 +1,116 @@
+name: Deploy tai-admin
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-tai-admin
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Deploy static Vite build to Ubuntu server
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Deploy via SSH
+        env:
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_PORT: ${{ secrets.SSH_PORT }}
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          APP_DIR: ${{ secrets.APP_DIR }}
+        run: |
+          set -euo pipefail
+
+          if [ -z "${SSH_HOST:-}" ]; then
+            echo "::error::Missing required secret SSH_HOST"
+            exit 1
+          fi
+          if [ -z "${SSH_PRIVATE_KEY:-}" ]; then
+            echo "::error::Missing required secret SSH_PRIVATE_KEY"
+            exit 1
+          fi
+
+          SSH_USER="${SSH_USER:-root}"
+          SSH_PORT="${SSH_PORT:-22}"
+          APP_DIR="${APP_DIR:-/var/www/tai-admin}"
+
+          mkdir -p "$HOME/.ssh"
+          chmod 700 "$HOME/.ssh"
+          trap 'rm -f "$HOME/.ssh/deploy_key"' EXIT
+
+          printf '%s\n' "$SSH_PRIVATE_KEY" | tr -d '\r' > "$HOME/.ssh/deploy_key"
+          chmod 600 "$HOME/.ssh/deploy_key"
+
+          APP_DIR_ESCAPED="$(printf '%q' "$APP_DIR")"
+
+          ssh \
+            -i "$HOME/.ssh/deploy_key" \
+            -p "$SSH_PORT" \
+            -o BatchMode=yes \
+            -o StrictHostKeyChecking=accept-new \
+            -o ServerAliveInterval=30 \
+            -o ServerAliveCountMax=6 \
+            -o ConnectTimeout=30 \
+            "${SSH_USER}@${SSH_HOST}" \
+            "if [ \"\$(id -u)\" -ne 0 ]; then SUDO='sudo -H'; else SUDO=''; fi; \$SUDO bash -s -- ${APP_DIR_ESCAPED}" <<'EOF'
+          set -euo pipefail
+
+          APP_DIR="$1"
+
+          export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:${PATH:-}"
+          export NVM_DIR="/root/.nvm"
+          if [ -s "$NVM_DIR/nvm.sh" ]; then
+            set +u
+            # shellcheck source=/dev/null
+            . "$NVM_DIR/nvm.sh"
+            set -u
+          fi
+
+          if [ ! -d "$APP_DIR" ]; then
+            echo "ERROR: APP_DIR does not exist: $APP_DIR" >&2
+            exit 1
+          fi
+
+          cd "$APP_DIR"
+
+          command -v node >/dev/null 2>&1 || { echo "ERROR: node not found in PATH ($PATH)" >&2; exit 1; }
+          command -v npm >/dev/null 2>&1 || { echo "ERROR: npm not found in PATH ($PATH)" >&2; exit 1; }
+          echo "Runtime: node $(node -v), npm $(npm -v)"
+
+          echo "Syncing origin/main in $APP_DIR (preserving untracked .env)..."
+          git -c safe.directory="$APP_DIR" fetch origin main
+          git -c safe.directory="$APP_DIR" reset --hard origin/main
+          echo "Deployed commit: $(git -c safe.directory="$APP_DIR" rev-parse --short HEAD)"
+
+          echo "Installing dependencies..."
+          if [ -f package-lock.json ]; then
+            npm ci --no-audit --no-fund || npm install --no-audit --no-fund
+          else
+            npm install --no-audit --no-fund
+          fi
+
+          echo "Building Vite production bundle..."
+          npm run build
+
+          if [ ! -s "$APP_DIR/dist/index.html" ]; then
+            echo "ERROR: Expected build artifact missing or empty: $APP_DIR/dist/index.html" >&2
+            exit 1
+          fi
+
+          echo "Verified static build artifact: $APP_DIR/dist/index.html ($(wc -c < "$APP_DIR/dist/index.html") bytes)"
+
+          if command -v nginx >/dev/null 2>&1 && command -v systemctl >/dev/null 2>&1 && systemctl is-active --quiet nginx; then
+            echo "Build complete. Nginx is active and serving $APP_DIR/dist (no PM2 process required)."
+          else
+            echo "Build complete at $APP_DIR/dist (no PM2 process required)."
+          fi
+          EOF
